@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "csharplearning": {
+      "commandName": "Project",
+      "commandLineArgs": "-pc test.json"
+    }
+  }
+}
