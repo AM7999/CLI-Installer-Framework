@@ -1,8 +1,16 @@
 {
   "profiles": {
-    "csharplearning": {
+    "Framework, No Args": {
       "commandName": "Project",
-      "commandLineArgs": "-pc test.json"
+      "commandLineArgs": ""
+    },
+    "Packager, Package test directory": {
+      "commandName": "Project",
+      "commandLineArgs": "-p"
+    },
+    "Installer, Install package": {
+      "commandName": "Project",
+      "commandLineArgs": "-i pkg_conf.json"
     }
   }
 }

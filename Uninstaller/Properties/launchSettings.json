@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Uninstaller, No Args": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    },
+    "Uninstaller, Uninstall Test Package": {
+      "commandName": "Project",
+      "commandLineArgs": "-U pkg_conf.json "
+    }
+  }
+}
