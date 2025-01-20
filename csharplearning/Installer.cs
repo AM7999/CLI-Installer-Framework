@@ -12,8 +12,13 @@ class Util {
         sr.Close();
         return str;
     }
-    public string getHostArch() {
+    public string GetHostArch() {
         return Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+    }
+    static void CreateFolder(string folderPath, string folderName) {
+        if (!Directory.Exists(folderPath + folderName)) {
+            Directory.CreateDirectory(folderPath + folderName);
+        }
     }
 }
 
@@ -28,54 +33,71 @@ class Package {
     public static void Pack(string sourceDir, string destDir) {
         CabInfo cab = new CabInfo(destDir);
         // Packing files in the source directory with max compression into the cab file
-        cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Max, null);
+        cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Normal, null);
     }
 
-    public static void parsePackageInfo(string json) {
+    public static bool returnPackageArch(string json) {
         Util util = new Util();
         string pkgInfo = util.fileReader(json);
         dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
-        string pkgName = pkg["name"];
-        string pkgVersion = pkg["version"];
-        string pkgDescription = pkg["description"];
         string pkgArch = pkg["arch"];
-        if(pkgArch != util.getHostArch()) {
+        if(pkgArch != util.GetHostArch() && pkgArch != "Any") {
             Console.WriteLine("The package is not compatible with the host architecture.");
-            return;
+            return false;
         }
-
+        if(pkgArch != util.GetHostArch() && pkgArch == "Any") {
+            return true;
+        }
+        return true;
     }
+
+
+
 }
 
 class App {
-    static void Main(String[] args) {
+    static int Main(String[] args) {
 
+        // Creating a util object so we can use both static and non static members of the class
         Util util = new Util();
 
+        // exiting if you didn't provide an argument
         if (args.Length == 0) {
             Console.WriteLine("Please run this with the included batch file.");
+            return 1;
         }
-        if (args.Length > 0) {
-            if (args[0] == "--package" || args[0] == "-p") {
-                Console.Write(util.getHostArch());
 
-            } else if(args[0] == "--package-config" || args[0] == "-pc") {
+        // Checking if you have more than 0 arguments
+        if (args.Length > 0) {
+            // checking the first arg
+            if (args[0] == "--package" || args[0] == "-p") {
+                Console.Write(util.GetHostArch());
+            } 
+            // checking if the first arg is -pc or --package-config to see 
+            if(args[0] == "--package-config" || args[0] == "-pc") {
                 if(args.Length < 2) {
                     Console.WriteLine("Please provide a package configuration file.");
+                    return 1;
                 } else if (args.Length == 2) {
-                    //Console.WriteLine(args[0] + " " + args[1]);
+                    testMarker:
+                    Package.Pack("A:\\TestApplication\\", "A:\\disk0.cab");
+                }
+            }
+            if (args[0] == "-i" || args[0] == "--install") {
+                if (args.Length < 2) {
+                    Console.WriteLine("Please provide a package file.");
+                    return 1;
+                }
+                else if (args.Length == 2) {
+                    bool compatible = Package.returnPackageArch(args[1]);
+                    if(!compatible){
+                        return 1;
+                    } else if(compatible) {
+                        Package.Unpack(args[1], "A:\\TestInstallPath\\");
+                    }
                 }
             }
         }
-
-        //Panel panel = new Panel("");
-        //panel.Header = new PanelHeader("HI");
-        //panel.Border = BoxBorder.Rounded;
-        //panel.Padding = new Padding(5, 5, 5, 5);
-        //panel.Expand = true;
-        //AnsiConsole.Write(panel);
-
-
-
+        return 0;
     }
 }

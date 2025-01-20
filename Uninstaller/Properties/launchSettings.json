@@ -6,7 +6,7 @@
     },
     "Uninstaller, Uninstall Test Package": {
       "commandName": "Project",
-      "commandLineArgs": "-U pkg_conf.json "
+      "commandLineArgs": "-U pkg_conf.json installInf"
     }
   }
 }

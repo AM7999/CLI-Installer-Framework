@@ -1,0 +1,31 @@
+{
+  "name": "UTSaveEditorCLI",
+  "version": "1.0.0",
+  "description": "A CLI tool for editing Undertale Save files",
+  "author": {
+    "name": "Angel",
+    "email": "AM799912122019@gmail.com"
+  },
+  "arch": "amd64",
+  "OS": [
+    {
+      "name": "Windows",
+      "version": "10",
+      "min_version": "6.1",
+      "files": [
+        "disk0_win.cab"
+      ],
+      "registry_keys": [
+        "HKEY_LOCAL_MACHINE\\SOFTWARE\\UTSaveEditorCLI"
+      ]
+    },
+    {
+      "name": "Linux",
+      "version": "6.12",
+      "min_version": "4.19",
+      "files": [
+        "disk0_linux.cab"
+      ]
+    }
+  ]
+}
