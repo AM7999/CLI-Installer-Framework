@@ -12,6 +12,7 @@ class Util {
         sr.Close();
         return str;
     }
+
     public string GetHostArch() {
         return Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
     }
@@ -32,10 +33,26 @@ class Package {
     }
     public static void Pack(string sourceDir, string destDir) {
         CabInfo cab = new CabInfo(destDir);
-        // Packing files in the source directory with max compression into the cab file
+        // Packing files in the source directory with normal compression into the cab file
         cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Normal, null);
     }
 
+    // This is probably going to get me publicly executed by Mr. bill gates for how just messy this function is
+    public static string getPkgInformation(string json, 
+        bool getPkgName, bool getPkgVersion,
+        bool getPkgDesc, bool getAuthorElements) 
+    {
+        Util util = new Util();
+        string pkgInfo = util.fileReader(json);
+        dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
+        if (getPkgName) { return pkg["name"];}
+        if (getPkgVersion) { return pkg["version"]; }
+        if (getPkgDesc) { return pkg["description"]; }
+        if (getAuthorElements) { return pkg["author"]["name"] + " " + pkg["author"]["email"]; }
+        return "No information found.";
+    }
+
+    // This function is used to check if the package is compatible with the host architecture
     public static bool returnPackageArch(string json) {
         Util util = new Util();
         string pkgInfo = util.fileReader(json);
@@ -50,9 +67,6 @@ class Package {
         }
         return true;
     }
-
-
-
 }
 
 class App {
@@ -72,17 +86,25 @@ class App {
             // checking the first arg
             if (args[0] == "--package" || args[0] == "-p") {
                 Console.Write(util.GetHostArch());
-            } 
+            }
+
+
             // checking if the first arg is -pc or --package-config to see 
-            if(args[0] == "--package-config" || args[0] == "-pc") {
+            if (args[0] == "--package-config" || args[0] == "-pc") {
                 if(args.Length < 2) {
                     Console.WriteLine("Please provide a package configuration file.");
                     return 1;
                 } else if (args.Length == 2) {
-                    testMarker:
-                    Package.Pack("A:\\TestApplication\\", "A:\\disk0.cab");
+                    AnsiConsole.Status()
+                        .Spinner(Spinner.Known.Triangle)
+                        .Start("Compressing...", ctx => {
+                            Package.Pack("A:\\TestApplication\\", "A:\\disk0.cab");
+                        });
+                    Console.WriteLine("Finished Packing App" /*add pkg name eventually*/ );
                 }
             }
+
+            
             if (args[0] == "-i" || args[0] == "--install") {
                 if (args.Length < 2) {
                     Console.WriteLine("Please provide a package file.");
@@ -100,4 +122,17 @@ class App {
         }
         return 0;
     }
-}
+} // miku miku you can call me miku 
+  // blue hair, blue tie, hiding in your wifi
+  // open secrets, anyone can find me
+  // hear your music running through my mind
+  // I'm thinking miku miku oo ee oo
+  // I'm thinking miku miku oo ee oo
+  // I'm thinking miku miku oo ee oo
+  // I'm thinking miku miku oo ee oo
+  // I'm on top of the world because of you
+  // all i wanted to do is follow you
+  // I'll keep singing along to all of you
+  // I'll keep singing along
+  // I'm thinking miku miku oo ee oo
+  // Thank you github copilot for the lyrics (how the fuck did it actually get it like actually decently correct)
