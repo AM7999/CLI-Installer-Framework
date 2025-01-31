@@ -16,10 +16,13 @@ class Util {
     public string GetHostArch() {
         return Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
     }
-    static void CreateFolder(string folderPath, string folderName) {
+    public static void CreateFolder(string folderPath, string folderName) {
         if (!Directory.Exists(folderPath + folderName)) {
             Directory.CreateDirectory(folderPath + folderName);
         }
+    }
+    static void elevator() {
+
     }
 }
 
@@ -77,47 +80,53 @@ class App {
 
         // exiting if you didn't provide an argument
         if (args.Length == 0) {
-            Console.WriteLine("Please run this with the included batch file.");
+            Console.WriteLine("Installer, A simple package installer written in C#\n");
+            Console.WriteLine("Usage: Installer.exe [Option] <File> ");
+            Console.WriteLine("Options: ");
+            Console.WriteLine("  -i, --install <file>  Install a package");
+            Console.WriteLine("  -h, --help  Display this help message");
             return 1;
         }
 
         // Checking if you have more than 0 arguments
         if (args.Length > 0) {
-            // checking the first arg
-            if (args[0] == "--package" || args[0] == "-p") {
-                Console.Write(util.GetHostArch());
-            }
-
-
-            // checking if the first arg is -pc or --package-config to see 
-            if (args[0] == "--package-config" || args[0] == "-pc") {
-                if(args.Length < 2) {
-                    Console.WriteLine("Please provide a package configuration file.");
-                    return 1;
-                } else if (args.Length == 2) {
-                    AnsiConsole.Status()
-                        .Spinner(Spinner.Known.Triangle)
-                        .Start("Compressing...", ctx => {
-                            Package.Pack("A:\\TestApplication\\", "A:\\disk0.cab");
-                        });
-                    Console.WriteLine("Finished Packing App" /*add pkg name eventually*/ );
-                }
-            }
-
-            
+            // Checking if the first argument is -i or --install
             if (args[0] == "-i" || args[0] == "--install") {
-                if (args.Length < 2) {
-                    Console.WriteLine("Please provide a package file.");
-                    return 1;
-                }
-                else if (args.Length == 2) {
-                    bool compatible = Package.returnPackageArch(args[1]);
-                    if(!compatible){
+                // Checking if the second argument is not empty
+                if (args[1] != "") {
+                    // Checking if the file exists
+                    if (File.Exists(args[1])) {
+                        // Checking if the package is compatible with the host architecture
+                        if (Package.returnPackageArch(args[1])) {
+                            // Unpacking the package
+                            Package.Unpack(args[1], "C:\\Windows\\Temp\\InstallerCache");
+                            // Displaying the package information
+                            Console.WriteLine("Package Information: ");
+                            Console.WriteLine("Name: " + Package.getPkgInformation("C:\\Program Files\\package.json", true, false, false, false));
+                            Console.WriteLine("Version: " + Package.getPkgInformation("C:\\Program Files\\package.json", false, true, false, false));
+                            Console.WriteLine("Description: " + Package.getPkgInformation("C:\\Program Files\\package.json", false, false, true, false));
+                            Console.WriteLine("Author: " + Package.getPkgInformation("C:\\Program Files\\package.json", false, false, false, true));
+                            return 0;
+                        }
+                    }
+                    else {
+                        Console.WriteLine("The file does not exist.");
                         return 1;
-                    } else if(compatible) {
-                        Package.Unpack(args[1], "A:\\TestInstallPath\\");
                     }
                 }
+                else {
+                    Console.WriteLine("Please provide a file to install.");
+                    return 1;
+                }
+            }
+            // Checking if the first argument is -h or --help
+            if (args[0] == "-h" || args[0] == "--help"){
+                Console.WriteLine("Installer, A simple package installer written in C#\n");
+                Console.WriteLine("Usage: Installer.exe [Option] <File> ");
+                Console.WriteLine("Options: ");
+                Console.WriteLine("  -i, --install <file>  Install a package");
+                Console.WriteLine("  -h, --help  Display this help message");
+                return 0;
             }
         }
         return 0;
