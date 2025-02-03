@@ -2,6 +2,7 @@
   "name": "UTSaveEditorCLI",
   "version": "1.0.0",
   "description": "A CLI tool for editing Undertale Save files",
+  "license": "GPL v3",
   "author": {
     "name": "Angel",
     "email": "AM799912122019@gmail.com"

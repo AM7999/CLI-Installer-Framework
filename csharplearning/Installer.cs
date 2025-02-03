@@ -14,7 +14,8 @@ class Util {
     }
 
     public string GetHostArch() {
-        return Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+        string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+        return arch;
     }
     public static void CreateFolder(string folderPath, string folderName) {
         if (!Directory.Exists(folderPath + folderName)) {
@@ -37,13 +38,15 @@ class Package {
     public static void Pack(string sourceDir, string destDir) {
         CabInfo cab = new CabInfo(destDir);
         // Packing files in the source directory with normal compression into the cab file
+        // Might go for a different approach for packing the cab file, MakeCab seems to be a better (easier) option since i can just query through each file in a dir then add it to the MakeCab ddf
         cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Normal, null);
     }
 
     // This is probably going to get me publicly executed by Mr. bill gates for how just messy this function is
     public static string getPkgInformation(string json, 
         bool getPkgName, bool getPkgVersion,
-        bool getPkgDesc, bool getAuthorElements) 
+        bool getPkgDesc, bool getAuthorElements,
+        bool checkLic)
     {
         Util util = new Util();
         string pkgInfo = util.fileReader(json);
@@ -52,6 +55,7 @@ class Package {
         if (getPkgVersion) { return pkg["version"]; }
         if (getPkgDesc) { return pkg["description"]; }
         if (getAuthorElements) { return pkg["author"]["name"] + " " + pkg["author"]["email"]; }
+        if (checkLic) { return pkg["license"]; }
         return "No information found.";
     }
 
@@ -61,11 +65,13 @@ class Package {
         string pkgInfo = util.fileReader(json);
         dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
         string pkgArch = pkg["arch"];
-        if(pkgArch != util.GetHostArch() && pkgArch != "Any") {
-            Console.WriteLine("The package is not compatible with the host architecture.");
+        string expectedArch = util.GetHostArch();
+        // How does my code get any worse than this
+        if(pkgArch != expectedArch.ToLower() && pkgArch != "Any") {
+            AnsiConsole.MarkupLine("[bold red]The package is not compatible with the host architecture.[/]");
             return false;
         }
-        if(pkgArch != util.GetHostArch() && pkgArch == "Any") {
+        if(pkgArch != expectedArch.ToLower() && pkgArch == "Any") {
             return true;
         }
         return true;
@@ -84,6 +90,8 @@ class App {
             Console.WriteLine("Usage: Installer.exe [Option] <File> ");
             Console.WriteLine("Options: ");
             Console.WriteLine("  -i, --install <file>  Install a package");
+            Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
+            Console.WriteLine("  -pc --package-config <config_name> ");
             Console.WriteLine("  -h, --help  Display this help message");
             return 1;
         }
@@ -96,17 +104,43 @@ class App {
                 if (args[1] != "") {
                     // Checking if the file exists
                     if (File.Exists(args[1])) {
-                        // Checking if the package is compatible with the host architecture
-                        if (Package.returnPackageArch(args[1])) {
-                            // Unpacking the package
-                            Package.Unpack(args[1], "C:\\Windows\\Temp\\InstallerCache");
-                            // Displaying the package information
-                            Console.WriteLine("Package Information: ");
-                            Console.WriteLine("Name: " + Package.getPkgInformation("C:\\Program Files\\package.json", true, false, false, false));
-                            Console.WriteLine("Version: " + Package.getPkgInformation("C:\\Program Files\\package.json", false, true, false, false));
-                            Console.WriteLine("Description: " + Package.getPkgInformation("C:\\Program Files\\package.json", false, false, true, false));
-                            Console.WriteLine("Author: " + Package.getPkgInformation("C:\\Program Files\\package.json", false, false, false, true));
+                        // Unpacking the package
+                        AnsiConsole.Status()
+                            .Spinner(Spinner.Known.Material)
+                            .Start("Unpacking to Temporary Directory...", ctx => {
+                                Package.Unpack(args[1], "C:\\Windows\\Temp\\InstallerCache");
+                            });
+
+                        // checking the pkg architecture
+                        bool pkgArch = Package.returnPackageArch("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json");
+                        if (!pkgArch) {
+                            return 1;
+                        }
+
+                        // Grabbing the package information
+                        string pkgName = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", true, false, false, false, false);
+                        string pkgVersion = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, true, false, false, false);
+                        string pkgDesc = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, false, true, false, false);
+                        string pkgAuthor = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, false, false, true, false);
+                        string pkgLic = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, false, false, false, true);
+
+                        AnsiConsole.Markup("[bold green]Package Information[/]\n");
+                        AnsiConsole.Markup($"[bold]Name:[/] {pkgName}\n");
+                        AnsiConsole.Markup($"[bold]Version:[/] {pkgVersion}\n");
+                        AnsiConsole.Markup($"[bold]Description:[/] {pkgDesc} \n");
+                        AnsiConsole.Markup($"[bold]Author:[/] {pkgAuthor} \n");
+                        AnsiConsole.Markup($"[bold]License:[/] {pkgLic} \n");
+
+                        var confirm = AnsiConsole.Confirm("Do you want to install this package?");
+                        if (confirm) {
+                            // Moving the files to the correct directory
+                            Directory.Move("C:\\Windows\\Temp\\InstallerCache\\", "C:\\Program Files\\" + pkgName);
+                            Console.WriteLine("Package installed successfully.");
                             return 0;
+                        }
+                        else {
+                            Console.WriteLine("Package installation cancelled.");
+                            return 1;
                         }
                     }
                     else {
@@ -125,6 +159,8 @@ class App {
                 Console.WriteLine("Usage: Installer.exe [Option] <File> ");
                 Console.WriteLine("Options: ");
                 Console.WriteLine("  -i, --install <file>  Install a package");
+                Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
+                Console.WriteLine("  -pc --package-config <config_name> ");
                 Console.WriteLine("  -h, --help  Display this help message");
                 return 0;
             }

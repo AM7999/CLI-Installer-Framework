@@ -10,7 +10,7 @@
     },
     "Installer, Install package": {
       "commandName": "Project",
-      "commandLineArgs": "-i pkg_conf.json"
+      "commandLineArgs": "-i A:\\osu.cab"
     }
   }
 }
