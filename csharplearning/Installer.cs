@@ -3,80 +3,8 @@ using System;
 using Microsoft.Deployment.Compression.Cab;
 using Newtonsoft.Json;
 using Spectre.Console;
-
-class Util {
-    public string fileReader(string file) {
-        StreamReader sr = new StreamReader(file);
-        sr.BaseStream.Seek(0, SeekOrigin.Begin);
-        string str = sr.ReadToEnd();
-        sr.Close();
-        return str;
-    }
-
-    public string GetHostArch() {
-        string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-        return arch;
-    }
-    public static void CreateFolder(string folderPath, string folderName) {
-        if (!Directory.Exists(folderPath + folderName)) {
-            Directory.CreateDirectory(folderPath + folderName);
-        }
-    }
-    static void elevator() {
-
-    }
-}
-
-class Package {
-    // Public access function, can be used in another class/function
-    public static void Unpack(string cabFile, string destDir) {
-        // Creating the CabInfo object
-        CabInfo cab = new CabInfo(cabFile);
-        // Unpacking the cab file to the destination directory
-        cab.Unpack(destDir);
-    }
-    public static void Pack(string sourceDir, string destDir) {
-        CabInfo cab = new CabInfo(destDir);
-        // Packing files in the source directory with normal compression into the cab file
-        // Might go for a different approach for packing the cab file, MakeCab seems to be a better (easier) option since i can just query through each file in a dir then add it to the MakeCab ddf
-        cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Normal, null);
-    }
-
-    // This is probably going to get me publicly executed by Mr. bill gates for how just messy this function is
-    public static string getPkgInformation(string json, 
-        bool getPkgName, bool getPkgVersion,
-        bool getPkgDesc, bool getAuthorElements,
-        bool checkLic)
-    {
-        Util util = new Util();
-        string pkgInfo = util.fileReader(json);
-        dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
-        if (getPkgName) { return pkg["name"];}
-        if (getPkgVersion) { return pkg["version"]; }
-        if (getPkgDesc) { return pkg["description"]; }
-        if (getAuthorElements) { return pkg["author"]["name"] + " " + pkg["author"]["email"]; }
-        if (checkLic) { return pkg["license"]; }
-        return "No information found.";
-    }
-
-    // This function is used to check if the package is compatible with the host architecture
-    public static bool returnPackageArch(string json) {
-        Util util = new Util();
-        string pkgInfo = util.fileReader(json);
-        dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
-        string pkgArch = pkg["arch"];
-        string expectedArch = util.GetHostArch();
-        // How does my code get any worse than this
-        if(pkgArch != expectedArch.ToLower() && pkgArch != "Any") {
-            AnsiConsole.MarkupLine("[bold red]The package is not compatible with the host architecture.[/]");
-            return false;
-        }
-        if(pkgArch != expectedArch.ToLower() && pkgArch == "Any") {
-            return true;
-        }
-        return true;
-    }
-}
+using net.am7999.Util;
+using net.am7999.Package;
 
 class App {
     static int Main(String[] args) {
@@ -129,13 +57,22 @@ class App {
                         AnsiConsole.Markup($"[bold]Version:[/] {pkgVersion}\n");
                         AnsiConsole.Markup($"[bold]Description:[/] {pkgDesc} \n");
                         AnsiConsole.Markup($"[bold]Author:[/] {pkgAuthor} \n");
-                        AnsiConsole.Markup($"[bold]License:[/] {pkgLic} \n");
+                        AnsiConsole.Markup($"[bold]License:[/] {pkgLic} \n\n");
+
+                        string installPath = "C:\\Program Files\\";
+
+                        var changeInstallPath = AnsiConsole.Confirm("Do you want to change the default install path? (currently: " + installPath + pkgName);
+                        if (changeInstallPath) {
+                            var newPath = AnsiConsole.Prompt(
+                                new TextPrompt<string>("\nPlease enter a [bold]new[/] install path: "));
+                            installPath = newPath;
+                        }
 
                         var confirm = AnsiConsole.Confirm("Do you want to install this package?");
                         if (confirm) {
                             // Moving the files to the correct directory
-                            Directory.Move("C:\\Windows\\Temp\\InstallerCache\\", "C:\\Program Files\\" + pkgName);
-                            Console.WriteLine("Package installed successfully.");
+                            net.am7999.Util.Util.CopyDirectory("C:\\Windows\\Temp\\InstallerCache\\", installPath + pkgName);
+                            AnsiConsole.Markup("[green]Package Installation Completed Sucessfuly[/]");
                             return 0;
                         }
                         else {
@@ -153,13 +90,36 @@ class App {
                     return 1;
                 }
             }
+
+            if (args[0] == "-p" || args[0] == "--package") {
+                if (args[1] != "") {
+                    if (args[2] != "") {
+                        if (File.Exists(args[2])) {
+
+                        }
+                        else {
+                            AnsiConsole.Markup("[red]Could Not find file!!![/]");
+                            return 0;
+                        }
+                    }
+                    else {
+
+                    }
+                }
+                else {
+
+                }
+            }
+
+            if (args[0] == "-pc" || args[0] == "--package-config")
+
             // Checking if the first argument is -h or --help
             if (args[0] == "-h" || args[0] == "--help"){
                 Console.WriteLine("Installer, A simple package installer written in C#\n");
                 Console.WriteLine("Usage: Installer.exe [Option] <File> ");
                 Console.WriteLine("Options: ");
                 Console.WriteLine("  -i, --install <file>  Install a package");
-                Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
+                Console.WriteLine("  -p, --pack <dir> <config>  Pack a directory into a package");
                 Console.WriteLine("  -pc --package-config <config_name> ");
                 Console.WriteLine("  -h, --help  Display this help message");
                 return 0;
