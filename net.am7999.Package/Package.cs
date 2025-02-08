@@ -4,10 +4,8 @@ using Newtonsoft.Json;
 using net.am7999.Util;
 using Spectre.Console;
 
-namespace net.am7999.Util
-{
-    public class Util
-    {
+namespace net.am7999.Util {
+    public class Util {
         public static string fileReader(string file) {
             StreamReader sr = new StreamReader(file);
             sr.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -47,10 +45,8 @@ namespace net.am7999.Util
 }
 
 
-namespace net.am7999.Package
-{
-    public class Package
-    {
+namespace net.am7999.Package {
+    public class Package {
         // Public access function, can be used in another class/function
         public static void Unpack(string cabFile, string destDir) {
             // Creating the CabInfo object
@@ -97,6 +93,13 @@ namespace net.am7999.Package
                 return true;
             }
             return true;
+        }
+
+        public struct jsonSchema {
+            public string pkgName;
+            public string pkgVersion;
+            public string pkgDesc;
+
         }
     }
 }

@@ -6,11 +6,11 @@
     },
     "Packager, Package test directory": {
       "commandName": "Project",
-      "commandLineArgs": "-pc test.json"
+      "commandLineArgs": "-p T"
     },
     "Installer, Install package": {
       "commandName": "Project",
-      "commandLineArgs": "-i A:\\osu.cab"
+      "commandLineArgs": "-i A:\\disk0.cab"
     }
   }
 }

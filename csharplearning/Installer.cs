@@ -93,21 +93,10 @@ class App {
 
             if (args[0] == "-p" || args[0] == "--package") {
                 if (args[1] != "") {
-                    if (args[2] != "") {
-                        if (File.Exists(args[2])) {
-
-                        }
-                        else {
-                            AnsiConsole.Markup("[red]Could Not find file!!![/]");
-                            return 0;
-                        }
-                    }
-                    else {
-
-                    }
+                    net.am7999.Util.Util.
                 }
                 else {
-
+                    Console.Write("hi");
                 }
             }
 
