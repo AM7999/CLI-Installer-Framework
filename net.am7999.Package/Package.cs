@@ -3,6 +3,7 @@ using Microsoft.Deployment.Compression.Cab;
 using Newtonsoft.Json;
 using net.am7999.Util;
 using Spectre.Console;
+using System.Security.Cryptography.X509Certificates;
 
 namespace net.am7999.Util {
     public class Util {
@@ -41,10 +42,22 @@ namespace net.am7999.Util {
                 CopyDirectory(directory, dest);
             }
         }
+        public static bool doesFolderExsist(string folder) {
+            if(Directory.Exists(folder)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }
 
-
+/* 
+ * how do i always seem to manage myself into the strangest of the weirdest contreversies
+ * Jackson,
+ * Emma
+ * i'll remember more later
+*/
 namespace net.am7999.Package {
     public class Package {
         // Public access function, can be used in another class/function
@@ -57,8 +70,7 @@ namespace net.am7999.Package {
         public static void Pack(string sourceDir, string destDir) {
             CabInfo cab = new CabInfo(destDir);
             // Packing files in the source directory with normal compression into the cab file
-            // Might go for a different approach for packing the cab file, MakeCab seems to be a better (easier) option since i can just query through each file in a dir then add it to the MakeCab ddf?
-            cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Normal, null);
+            cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Max, null);
         }
 
         // This is probably going to get me publicly executed by Mr. bill gates for how just messy this function is

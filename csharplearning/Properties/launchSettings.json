@@ -6,11 +6,11 @@
     },
     "Packager, Package test directory": {
       "commandName": "Project",
-      "commandLineArgs": "-p T"
+      "commandLineArgs": "-p A:\\Deltarune"
     },
     "Installer, Install package": {
       "commandName": "Project",
-      "commandLineArgs": "-i A:\\disk0.cab"
+      "commandLineArgs": "-i C:\\Deltarune.cab"
     }
   }
 }

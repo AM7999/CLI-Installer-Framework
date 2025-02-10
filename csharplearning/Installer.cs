@@ -32,6 +32,9 @@ class App {
                 if (args[1] != "") {
                     // Checking if the file exists
                     if (File.Exists(args[1])) {
+                        // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the fuck my installer was bringing files back from the dead
+                        bool checkForLeftoverCacheDir = net.am7999.Util.Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
+                        if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache"); } 
                         // Unpacking the package
                         AnsiConsole.Status()
                             .Spinner(Spinner.Known.Material)
@@ -81,7 +84,7 @@ class App {
                         }
                     }
                     else {
-                        Console.WriteLine("The file does not exist.");
+                        AnsiConsole.Markup("[red]The file does not exist.[/]");
                         return 1;
                     }
                 }
@@ -93,7 +96,13 @@ class App {
 
             if (args[0] == "-p" || args[0] == "--package") {
                 if (args[1] != "") {
-                    net.am7999.Util.Util.
+                    string pkgName = net.am7999.Package.Package.getPkgInformation(args[1] + "\\packageManifest.json", true, false, false, false, false);
+                    string pkgAuthor = net.am7999.Package.Package.getPkgInformation(args[1] + "\\packageManifest.json", false, false, false, true, false);
+                    string pkgVersion = net.am7999.Package.Package.getPkgInformation(args[1] + "\\packageManifest.json", false, true, false, false, false);
+
+                    AnsiConsole.Status()
+                        .Spinner(Spinner.Known.Material)
+                        .Start("[green]Packaging: [/]" + pkgName + " " +  pkgAuthor + " " + pkgVersion, ctx => { Package.Pack(args[1], "C:\\" + pkgName + ".cab" );});
                 }
                 else {
                     Console.Write("hi");

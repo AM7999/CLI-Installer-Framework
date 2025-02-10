@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\net.am7999.Package\net.am7999.Package.csproj" />
-    <ProjectReference Include="..\net.am7999.util\net.am7999.Util.csproj" />
   </ItemGroup>
 
 </Project>
