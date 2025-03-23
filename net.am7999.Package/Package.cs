@@ -1,13 +1,11 @@
 ﻿using System.Dynamic;
 using Microsoft.Deployment.Compression.Cab;
 using Newtonsoft.Json;
-using net.am7999.Util;
 using Spectre.Console;
-using System.Security.Cryptography.X509Certificates;
 
 namespace net.am7999.Util {
     public class Util {
-        public static string fileReader(string file) {
+        public static string FileReader(string file) {
             StreamReader sr = new StreamReader(file);
             sr.BaseStream.Seek(0, SeekOrigin.Begin);
             string str = sr.ReadToEnd();
@@ -52,12 +50,6 @@ namespace net.am7999.Util {
     }
 }
 
-/* 
- * how do i always seem to manage myself into the strangest of the weirdest contreversies
- * Jackson,
- * Emma
- * i'll remember more later
-*/
 namespace net.am7999.Package {
     public class Package {
         // Public access function, can be used in another class/function
@@ -74,11 +66,12 @@ namespace net.am7999.Package {
         }
 
         // This is probably going to get me publicly executed by Mr. bill gates for how just messy this function is
+        // whoever developed dotnet I deeply am sorry for this function
         public static string getPkgInformation(string json,
             bool getPkgName, bool getPkgVersion,
             bool getPkgDesc, bool getAuthorElements,
             bool checkLic) {
-            string pkgInfo = net.am7999.Util.Util.fileReader(json);
+            string pkgInfo = net.am7999.Util.Util.FileReader(json);
             dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
             if (getPkgName) { return pkg["name"]; }
             if (getPkgVersion) { return pkg["version"]; }
@@ -89,8 +82,10 @@ namespace net.am7999.Package {
         }
 
         // This function is used to check if the package is compatible with the host architecture
+        // need to make this cross platform because right now i really just
+        // this is just bad code how about that
         public static bool returnPackageArch(string json) {
-            string pkgInfo = net.am7999.Util.Util.fileReader(json);
+            string pkgInfo = net.am7999.Util.Util.FileReader(json);
             dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
             string pkgArch = pkg["arch"];
             string expectedArch = net.am7999.Util.Util.GetHostArch();
@@ -105,13 +100,6 @@ namespace net.am7999.Package {
                 return true;
             }
             return true;
-        }
-
-        public struct jsonSchema {
-            public string pkgName;
-            public string pkgVersion;
-            public string pkgDesc;
-
         }
     }
 }

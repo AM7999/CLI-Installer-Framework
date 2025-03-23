@@ -14,7 +14,8 @@
       "version": "10",
       "min_version": "6.1",
       "files": [
-        "disk0_win.cab"
+        "App.exe",
+        "App.dat"
       ],
       "registry_keys": [
         "HKEY_LOCAL_MACHINE\\SOFTWARE\\UTSaveEditorCLI"

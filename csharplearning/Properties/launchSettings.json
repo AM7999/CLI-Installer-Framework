@@ -11,6 +11,10 @@
     "Installer, Install package": {
       "commandName": "Project",
       "commandLineArgs": "-i C:\\Deltarune.cab"
+    },
+    "Package Config": {
+      "commandName": "Project",
+      "commandLineArgs": "-pc"
     }
   }
 }

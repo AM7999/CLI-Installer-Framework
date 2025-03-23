@@ -9,9 +9,6 @@ using net.am7999.Package;
 class App {
     static int Main(String[] args) {
 
-        // Creating a util object so we can use both static and non static members of the class
-        Util util = new Util();
-
         // exiting if you didn't provide an argument
         if (args.Length == 0) {
             Console.WriteLine("Installer, A simple package installer written in C#\n");
@@ -19,7 +16,7 @@ class App {
             Console.WriteLine("Options: ");
             Console.WriteLine("  -i, --install <file>  Install a package");
             Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
-            Console.WriteLine("  -pc --package-config <config_name> ");
+            Console.WriteLine("  -pc, --package-config <config_name> ");
             Console.WriteLine("  -h, --help  Display this help message");
             return 1;
         }
@@ -33,7 +30,7 @@ class App {
                     // Checking if the file exists
                     if (File.Exists(args[1])) {
                         // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the fuck my installer was bringing files back from the dead
-                        bool checkForLeftoverCacheDir = net.am7999.Util.Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
+                        bool checkForLeftoverCacheDir = Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
                         if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache"); } 
                         // Unpacking the package
                         AnsiConsole.Status()
@@ -64,7 +61,7 @@ class App {
 
                         string installPath = "C:\\Program Files\\";
 
-                        var changeInstallPath = AnsiConsole.Confirm("Do you want to change the default install path? (currently: " + installPath + pkgName);
+                        var changeInstallPath = AnsiConsole.Confirm("Do you want to change the default install path? (currently: " + installPath + pkgName, false);
                         if (changeInstallPath) {
                             var newPath = AnsiConsole.Prompt(
                                 new TextPrompt<string>("\nPlease enter a [bold]new[/] install path: "));
@@ -74,7 +71,7 @@ class App {
                         var confirm = AnsiConsole.Confirm("Do you want to install this package?");
                         if (confirm) {
                             // Moving the files to the correct directory
-                            net.am7999.Util.Util.CopyDirectory("C:\\Windows\\Temp\\InstallerCache\\", installPath + pkgName);
+                            Util.CopyDirectory("C:\\Windows\\Temp\\InstallerCache\\", installPath + pkgName);
                             AnsiConsole.Markup("[green]Package Installation Completed Sucessfuly[/]");
                             return 0;
                         }
@@ -95,21 +92,37 @@ class App {
             }
 
             if (args[0] == "-p" || args[0] == "--package") {
+                if (args[1] == "") {
+                    
+                }
                 if (args[1] != "") {
-                    string pkgName = net.am7999.Package.Package.getPkgInformation(args[1] + "\\packageManifest.json", true, false, false, false, false);
-                    string pkgAuthor = net.am7999.Package.Package.getPkgInformation(args[1] + "\\packageManifest.json", false, false, false, true, false);
-                    string pkgVersion = net.am7999.Package.Package.getPkgInformation(args[1] + "\\packageManifest.json", false, true, false, false, false);
+                    bool checkForLeftoverCacheDir = Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
+                    if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache\\*"); }
+
+                    string pkgName = Package.getPkgInformation(args[1] + "\\packageManifest.json", true, false, false, false, false);
+                    string pkgAuthor = Package.getPkgInformation(args[1] + "\\packageManifest.json", false, false, false, true, false);
+                    string pkgVersion = Package.getPkgInformation(args[1] + "\\packageManifest.json", false, true, false, false, false);
 
                     AnsiConsole.Status()
                         .Spinner(Spinner.Known.Material)
-                        .Start("[green]Packaging: [/]" + pkgName + " " +  pkgAuthor + " " + pkgVersion, ctx => { Package.Pack(args[1], "C:\\" + pkgName + ".cab" );});
+                        .Start("[green]Packaging: [/]" + pkgName + " By: " +  pkgAuthor + " v" + pkgVersion, ctx => { Package.Pack(args[1], "C:\\" + pkgName + ".cab" );});
                 }
                 else {
-                    Console.Write("hi");
+                    AnsiConsole.Markup("[red] Could not find " + args[1] + "[/]");
                 }
             }
 
-            if (args[0] == "-pc" || args[0] == "--package-config")
+            if (args[0] == "-pc" || args[0] == "--package-config") {
+                var pkgName = AnsiConsole.Prompt(
+                    new TextPrompt<string>("\nPlease enter the [u]name[/] of the package: "));
+                var pkgVersion = AnsiConsole.Prompt(
+                    new TextPrompt<string>("\nPlease enter the [u]version[/] of the package: ")); 
+                var pkgDesc = AnsiConsole.Prompt(
+                    new TextPrompt<string>("\nPlease enter the description of the package: "));
+                var pkgLicense = AnsiConsole.Prompt(
+                    new TextPrompt<string>("\nPlease enter the license of the package: "));
+                
+            }
 
             // Checking if the first argument is -h or --help
             if (args[0] == "-h" || args[0] == "--help"){
@@ -118,7 +131,7 @@ class App {
                 Console.WriteLine("Options: ");
                 Console.WriteLine("  -i, --install <file>  Install a package");
                 Console.WriteLine("  -p, --pack <dir> <config>  Pack a directory into a package");
-                Console.WriteLine("  -pc --package-config <config_name> ");
+                Console.WriteLine("  -pc, --package-config <config_name> ");
                 Console.WriteLine("  -h, --help  Display this help message");
                 return 0;
             }
@@ -138,4 +151,4 @@ class App {
   // I'll keep singing along to all of you
   // I'll keep singing along
   // I'm thinking miku miku oo ee oo
-  // Thank you github copilot for the lyrics (how the fuck did it actually get it like actually decently correct)
+  // Thank you github copilot for the lyrics (how the hell did it actually get it like actually decently correct)
