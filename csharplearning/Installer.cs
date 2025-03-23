@@ -121,7 +121,7 @@ class App {
                     new TextPrompt<string>("\nPlease enter the description of the package: "));
                 var pkgLicense = AnsiConsole.Prompt(
                     new TextPrompt<string>("\nPlease enter the license of the package: "));
-                
+                // i love vcs
             }
 
             // Checking if the first argument is -h or --help
