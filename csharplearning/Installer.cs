@@ -2,6 +2,7 @@
 using System;
 using Microsoft.Deployment.Compression.Cab;
 using Newtonsoft.Json;
+using System.CommandLine;
 using Spectre.Console;
 using net.am7999.Util;
 using net.am7999.Package;
@@ -23,7 +24,6 @@ class App {
             Console.WriteLine("  -h, --help  Display this help message");
             return 1;
         }
-
         // Checking if you have more than 0 arguments
         // There has to be a better way to do this...
         if (args.Length > 0) {
