@@ -52,12 +52,6 @@ namespace net.am7999.Util {
     }
 }
 
-/* 
- * how do i always seem to manage myself into the strangest of the weirdest contreversies
- * Jackson,
- * Emma
- * i'll remember more later
-*/
 namespace net.am7999.Package {
     public class Package {
         // Public access function, can be used in another class/function

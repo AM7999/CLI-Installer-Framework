@@ -25,6 +25,7 @@ class App {
         }
 
         // Checking if you have more than 0 arguments
+        // There has to be a better way to do this...
         if (args.Length > 0) {
             // Checking if the first argument is -i or --install
             if (args[0] == "-i" || args[0] == "--install") {
@@ -32,7 +33,7 @@ class App {
                 if (args[1] != "") {
                     // Checking if the file exists
                     if (File.Exists(args[1])) {
-                        // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the fuck my installer was bringing files back from the dead
+                        // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the heck my installer was bringing files back from the dead
                         bool checkForLeftoverCacheDir = net.am7999.Util.Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
                         if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache"); } 
                         // Unpacking the package
@@ -105,7 +106,7 @@ class App {
                         .Start("[green]Packaging: [/]" + pkgName + " " +  pkgAuthor + " " + pkgVersion, ctx => { Package.Pack(args[1], "C:\\" + pkgName + ".cab" );});
                 }
                 else {
-                    Console.Write("hi");
+                    Console.Write("");
                 }
             }
 
