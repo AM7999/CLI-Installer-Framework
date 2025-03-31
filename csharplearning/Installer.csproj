@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ilmerge" Version="3.0.41" />
     <PackageReference Include="MSFTCompression.Core.Cab" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
@@ -19,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\net.am7999.Package\net.am7999.Package.csproj" />
+    <EmbeddedResource Include="TestCab\Balatro.cab"/>
   </ItemGroup>
 
 </Project>

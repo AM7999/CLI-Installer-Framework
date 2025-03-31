@@ -16,7 +16,6 @@ class App {
             Console.WriteLine("Options: ");
             Console.WriteLine("  -i, --install <file>  Install a package");
             Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
-            Console.WriteLine("  -pc, --package-config <config_name> ");
             Console.WriteLine("  -h, --help  Display this help message");
             return 1;
         }
@@ -112,18 +111,6 @@ class App {
                 }
             }
 
-            if (args[0] == "-pc" || args[0] == "--package-config") {
-                var pkgName = AnsiConsole.Prompt(
-                    new TextPrompt<string>("\nPlease enter the [u]name[/] of the package: "));
-                var pkgVersion = AnsiConsole.Prompt(
-                    new TextPrompt<string>("\nPlease enter the [u]version[/] of the package: ")); 
-                var pkgDesc = AnsiConsole.Prompt(
-                    new TextPrompt<string>("\nPlease enter the description of the package: "));
-                var pkgLicense = AnsiConsole.Prompt(
-                    new TextPrompt<string>("\nPlease enter the license of the package: "));
-                // i love vcs
-            }
-
             // Checking if the first argument is -h or --help
             if (args[0] == "-h" || args[0] == "--help"){
                 Console.WriteLine("Installer, A simple package installer written in C#\n");
@@ -131,7 +118,6 @@ class App {
                 Console.WriteLine("Options: ");
                 Console.WriteLine("  -i, --install <file>  Install a package");
                 Console.WriteLine("  -p, --pack <dir> <config>  Pack a directory into a package");
-                Console.WriteLine("  -pc, --package-config <config_name> ");
                 Console.WriteLine("  -h, --help  Display this help message");
                 return 0;
             }
