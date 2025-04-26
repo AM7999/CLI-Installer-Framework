@@ -8,7 +8,7 @@ using net.am7999.Package;
 
 class App {
     static int Main(String[] args) {
-
+        
         // exiting if you didn't provide an argument
         if (args.Length == 0) {
             Console.WriteLine("Installer, A simple package installer written in C#\n");
