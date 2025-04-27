@@ -1,0 +1,8 @@
+{
+  "win": {
+    "tempDir": "C:\\Windows\\Temp\\InstallerCache"
+  },
+  "nix": {
+    "tempDir": "/tmp"
+  }
+}

@@ -1,4 +1,6 @@
 ﻿using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Deployment.Compression.Cab;
 using Newtonsoft.Json;
 using Spectre.Console;
@@ -12,7 +14,7 @@ namespace net.am7999.Util {
             sr.Close();
             return str;
         }
-
+        
         public static string GetHostArch() {
             string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
             return arch;
@@ -46,6 +48,10 @@ namespace net.am7999.Util {
             } else {
                 return false;
             }
+        }
+
+        public static string returnHostOperatingSystem() {
+            return "Not Implemented";
         }
     }
 }

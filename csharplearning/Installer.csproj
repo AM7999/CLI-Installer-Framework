@@ -20,7 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\net.am7999.Package\net.am7999.Package.csproj" />
-    <EmbeddedResource Include="TestCab\Balatro.cab"/>
+    <!--<EmbeddedResource Include="extractDirs.json"/>-->
+    <!--<EmbeddedResource Include="TestCab\Balatro.cab"/>-->
   </ItemGroup>
 
 </Project>
