@@ -1,7 +1,5 @@
 ﻿using System.IO;
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Microsoft.Deployment.Compression.Cab;
 using Newtonsoft.Json;
 using Spectre.Console;
@@ -9,7 +7,8 @@ using net.am7999.Util;
 using net.am7999.Package;
 
 class App {
-    static int Main(String[] args) {        
+    static int Main(String[] args) {
+
         // exiting if you didn't provide an argument
         if (args.Length == 0) {
             Console.WriteLine("Installer, A simple package installer written in C#\n");
@@ -92,6 +91,9 @@ class App {
             }
 
             if (args[0] == "-p" || args[0] == "--package") {
+                if (args[1] == "") {
+                    
+                }
                 if (args[1] != "") {
                     bool checkForLeftoverCacheDir = Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
                     if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache\\*"); }
