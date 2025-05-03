@@ -29,27 +29,27 @@ class App {
                     // Checking if the file exists
                     if (File.Exists(args[1])) {
                         // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the fuck my installer was bringing files back from the dead
-                        bool checkForLeftoverCacheDir = Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
-                        if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache"); } 
+                        bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath());
+                        if (checkForLeftoverCacheDir) { Directory.Delete(Util.returnInstallPath()); } 
                         // Unpacking the package
                         AnsiConsole.Status()
-                            .Spinner(Spinner.Known.Material)
+                            .Spinner(Spinner.Known.Shark)
                             .Start("Unpacking to Temporary Directory...", ctx => {
-                                Package.Unpack(args[1], "C:\\Windows\\Temp\\InstallerCache");
+                                Package.Unpack(args[1], Util.returnInstallPath());
                             });
 
                         // checking the pkg architecture
-                        bool pkgArch = Package.returnPackageArch("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json");
+                        bool pkgArch = Package.returnPackageArch(Util.returnInstallPath() + "packageManifest.json");
                         if (!pkgArch) {
                             return 1;
                         }
 
                         // Grabbing the package information
-                        string pkgName = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", true, false, false, false, false);
-                        string pkgVersion = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, true, false, false, false);
-                        string pkgDesc = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, false, true, false, false);
-                        string pkgAuthor = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, false, false, true, false);
-                        string pkgLic = Package.getPkgInformation("C:\\Windows\\Temp\\InstallerCache\\packageManifest.json", false, false, false, false, true);
+                        string pkgName = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", true, false, false, false, false);
+                        string pkgVersion = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, true, false, false, false);
+                        string pkgDesc = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, false, true, false, false);
+                        string pkgAuthor = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, false, false, true, false);
+                        string pkgLic = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, false, false, false, true);
 
                         AnsiConsole.Markup("[bold green]Package Information[/]\n");
                         AnsiConsole.Markup($"[bold]Name:[/] {pkgName}\n");
@@ -70,7 +70,7 @@ class App {
                         var confirm = AnsiConsole.Confirm("Do you want to install this package?");
                         if (confirm) {
                             // Moving the files to the correct directory
-                            Util.CopyDirectory("C:\\Windows\\Temp\\InstallerCache\\", installPath + pkgName);
+                            Util.CopyDirectory(Util.returnInstallPath() + "", installPath + pkgName);
                             AnsiConsole.Markup("[green]Package Installation Completed Sucessfuly[/]");
                             return 0;
                         }
@@ -95,12 +95,12 @@ class App {
                     
                 }
                 if (args[1] != "") {
-                    bool checkForLeftoverCacheDir = Util.doesFolderExsist("C:\\Windows\\Temp\\InstallerCache");
-                    if (checkForLeftoverCacheDir) { Directory.Delete("C:\\Windows\\Temp\\InstallerCache\\*"); }
+                    bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath());
+                    if (checkForLeftoverCacheDir) { Directory.Delete(Util.returnInstallPath() + "*"); }
 
-                    string pkgName = Package.getPkgInformation(args[1] + "\\packageManifest.json", true, false, false, false, false);
-                    string pkgAuthor = Package.getPkgInformation(args[1] + "\\packageManifest.json", false, false, false, true, false);
-                    string pkgVersion = Package.getPkgInformation(args[1] + "\\packageManifest.json", false, true, false, false, false);
+                    string pkgName = Package.getPkgInformation(args[1] + "packageManifest.json", true, false, false, false, false);
+                    string pkgAuthor = Package.getPkgInformation(args[1] + "packageManifest.json", false, false, false, true, false);
+                    string pkgVersion = Package.getPkgInformation(args[1] + "packageManifest.json", false, true, false, false, false);
 
                     AnsiConsole.Status()
                         .Spinner(Spinner.Known.Material)

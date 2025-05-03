@@ -7,6 +7,11 @@ using Spectre.Console;
 
 namespace net.am7999.Util {
     public class Util {
+
+        private string WinTempDir = "C:\\Windows\\Temp\\InstallerCache";
+        private string UnixTempDir = "/tmp/Installe";
+
+
         public static string FileReader(string file) {
             StreamReader sr = new StreamReader(file);
             sr.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -15,9 +20,11 @@ namespace net.am7999.Util {
             return str;
         }
         
+        // this originally wasn't cross platform, going to have to run a few checks now to determine
+        // how to get the host architecture
         public static string GetHostArch() {
-            string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-            return arch;
+            return "amd64";
+            //return arch;
         }
         public static void CreateFolder(string folderPath, string folderName) {
             if (!Directory.Exists(folderPath + folderName))
@@ -50,15 +57,22 @@ namespace net.am7999.Util {
             }
         }
 
-        public static string returnHostOperatingSystem() {
-            return "Not Implemented";
+        // i forgot to make my code cross platform early on so
+        // i mean, here we are now on May 2, 2025
+        public static string returnInstallPath() {
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) 
+                return "/tmp/InstallerCache/";
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return "/tmp/InstallerCache/";
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                return "C:\\Windows\\Temp\\InstallerCache\\";
+            return "unknown";
         }
     }
 }
 
 namespace net.am7999.Package {
     public class Package {
-        // Public access function, can be used in another class/function
         public static void Unpack(string cabFile, string destDir) {
             // Creating the CabInfo object
             CabInfo cab = new CabInfo(cabFile);
@@ -84,7 +98,7 @@ namespace net.am7999.Package {
             if (getPkgDesc) { return pkg["description"]; }
             if (getAuthorElements) { return pkg["author"]["name"] + " " + pkg["author"]["email"]; }
             if (checkLic) { return pkg["license"]; }
-            return "No information found.";
+            return "No information Specified.";
         }
 
         // This function is used to check if the package is compatible with the host architecture
@@ -106,6 +120,10 @@ namespace net.am7999.Package {
                 return true;
             }
             return true;
+        }
+
+        public static void createInstallationInformation() {
+
         }
     }
 }
