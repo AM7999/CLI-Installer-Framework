@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System;
-using Microsoft.Deployment.Compression.Cab;
-using Newtonsoft.Json;
-using Spectre.Console;
+﻿using Spectre.Console;
 using net.am7999.Util;
 using net.am7999.Package;
 
@@ -12,7 +8,7 @@ class App {
         // exiting if you didn't provide an argument
         if (args.Length == 0) {
             Console.WriteLine("Installer, A simple package installer written in C#\n");
-            Console.WriteLine("Usage: Installer.exe [Option] <File> ");
+            Console.WriteLine("Usage: Installer.exe [option] <file/folder> ");
             Console.WriteLine("Options: ");
             Console.WriteLine("  -i, --install <file>  Install a package");
             Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
@@ -69,8 +65,15 @@ class App {
 
                         var confirm = AnsiConsole.Confirm("Do you want to install this package?");
                         if (confirm) {
+                            AnsiConsole.Status()
+                            .Spinner(Spinner.Known.Shark)
+                            .Start("Installing...", ctx => {
+                                Util.CopyDirectory(Util.returnInstallPath() + "", installPath + pkgName);
+                                //Package.GenerateUninstallFiles(path);
+                            });
+
                             // Moving the files to the correct directory
-                            Util.CopyDirectory(Util.returnInstallPath() + "", installPath + pkgName);
+
                             AnsiConsole.Markup("[green]Package Installation Completed Sucessfuly[/]");
                             return 0;
                         }
@@ -88,6 +91,12 @@ class App {
                     Console.WriteLine("Please provide a file to install.");
                     return 1;
                 }
+            }
+
+            if(args[0] == "-d") {
+                string pkg = Util.FileReader(args[1]);
+                net.am7999.Package.Package.generateUninstallFiles(pkg);
+                return 10;
             }
 
             if (args[0] == "-p" || args[0] == "--package") {
@@ -114,7 +123,7 @@ class App {
             // Checking if the first argument is -h or --help
             if (args[0] == "-h" || args[0] == "--help"){
                 Console.WriteLine("Installer, A simple package installer written in C#\n");
-                Console.WriteLine("Usage: Installer.exe [Option] <File> ");
+                Console.WriteLine("Usage: Installer.exe [option] <file/folder> ");
                 Console.WriteLine("Options: ");
                 Console.WriteLine("  -i, --install <file>  Install a package");
                 Console.WriteLine("  -p, --pack <dir> <config>  Pack a directory into a package");

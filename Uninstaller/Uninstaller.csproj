@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\csharplearning\Installer.csproj" />
+    <ProjectRefrence Include="..\net.am7999.Package\net.am7999.Package.csproj"/>
   </ItemGroup>
 
 </Project>

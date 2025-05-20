@@ -1,15 +1,14 @@
-﻿using System.Dynamic;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Microsoft.Deployment.Compression.Cab;
+﻿using System.Runtime.InteropServices;
+using System.IO.Compression;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Spectre.Console;
 
 namespace net.am7999.Util {
     public class Util {
 
         private string WinTempDir = "C:\\Windows\\Temp\\InstallerCache";
-        private string UnixTempDir = "/tmp/Installe";
+        private string UnixTempDir = "/tmp/InstallerCache/";
 
 
         public static string FileReader(string file) {
@@ -73,16 +72,12 @@ namespace net.am7999.Util {
 
 namespace net.am7999.Package {
     public class Package {
-        public static void Unpack(string cabFile, string destDir) {
-            // Creating the CabInfo object
-            CabInfo cab = new CabInfo(cabFile);
-            // Unpacking the cab file to the destination directory
-            cab.Unpack(destDir);
+        public static void Unpack(string zipFile, string destDir) {
+            // its zipfile time!
+            ZipFile.ExtractToDirectory(zipFile, destDir);
         }
         public static void Pack(string sourceDir, string destDir) {
-            CabInfo cab = new CabInfo(destDir);
-            // Packing files in the source directory with normal compression into the cab file
-            cab.Pack(sourceDir, true, Microsoft.Deployment.Compression.CompressionLevel.Max, null);
+            ZipFile.CreateFromDirectory(sourceDir, destDir + ".zip");
         }
 
         // This is probably going to get me publicly executed by Mr. bill gates for how just messy this function is
@@ -93,11 +88,17 @@ namespace net.am7999.Package {
             bool checkLic) {
             string pkgInfo = net.am7999.Util.Util.FileReader(json);
             dynamic pkg = JsonConvert.DeserializeObject(pkgInfo);
-            if (getPkgName) { return pkg["name"]; }
-            if (getPkgVersion) { return pkg["version"]; }
-            if (getPkgDesc) { return pkg["description"]; }
-            if (getAuthorElements) { return pkg["author"]["name"] + " " + pkg["author"]["email"]; }
-            if (checkLic) { return pkg["license"]; }
+            if(pkg != null) {
+                if (getPkgName) { return pkg["name"]; }
+                if (getPkgVersion) { return pkg["version"]; }
+                if (getPkgDesc) { return pkg["description"]; }
+                if (getAuthorElements) { return pkg["author"]["name"] + " " + pkg["author"]["email"]; }
+                if (checkLic) { return pkg["license"]; }
+            }
+            else if(pkg == null) {
+                throw new Exception("No data in json file");
+            }
+
             return "No information Specified.";
         }
 
@@ -122,8 +123,10 @@ namespace net.am7999.Package {
             return true;
         }
 
-        public static void createInstallationInformation() {
-
+        public static void generateUninstallFiles(string json) {
+            dynamic pkg = JsonConvert.DeserializeObject(json);
+            JArray a = JArray.Parse(pkg["OS"][0]["files"]);
+            Console.WriteLine(a);
         }
     }
 }

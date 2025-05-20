@@ -8,6 +8,8 @@
     <Platforms>AnyCPU;x64</Platforms>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>
