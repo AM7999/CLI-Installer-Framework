@@ -12,7 +12,7 @@ class App {
             Console.WriteLine("Options: ");
             Console.WriteLine("  -i, --install <file>  Install a package");
             Console.WriteLine("  -p, --pack <dir>  Pack a directory into a package");
-            Console.WriteLine("  -h, --help  Display this help message");
+            Console.WriteLine("  -h, --help  Display this help message\n");
             return 1;
         }
 
@@ -26,7 +26,7 @@ class App {
                     if (File.Exists(args[1])) {
                         // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the fuck my installer was bringing files back from the dead
                         bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath());
-                        if (checkForLeftoverCacheDir) { Directory.Delete(Util.returnInstallPath()); } 
+                        if (checkForLeftoverCacheDir) { Util.DeleteDirectory(Util.returnInstallPath()); }
                         // Unpacking the package
                         AnsiConsole.Status()
                             .Spinner(Spinner.Known.Shark)
@@ -54,7 +54,7 @@ class App {
                         AnsiConsole.Markup($"[bold]Author:[/] {pkgAuthor} \n");
                         AnsiConsole.Markup($"[bold]License:[/] {pkgLic} \n\n");
 
-                        string installPath = "C:\\Program Files\\";
+                        string installPath = Util.returnInstallPath();
 
                         var changeInstallPath = AnsiConsole.Confirm("Do you want to change the default install path? (currently: " + installPath + pkgName, false);
                         if (changeInstallPath) {
@@ -100,12 +100,9 @@ class App {
             }
 
             if (args[0] == "-p" || args[0] == "--package") {
-                if (args[1] == "") {
-                    
-                }
                 if (args[1] != "") {
                     bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath());
-                    if (checkForLeftoverCacheDir) { Directory.Delete(Util.returnInstallPath() + "*"); }
+                    if (checkForLeftoverCacheDir) { Util.DeleteDirectory(Util.returnInstallPath() + "*"); }
 
                     string pkgName = Package.getPkgInformation(args[1] + "packageManifest.json", true, false, false, false, false);
                     string pkgAuthor = Package.getPkgInformation(args[1] + "packageManifest.json", false, false, false, true, false);
@@ -127,7 +124,7 @@ class App {
                 Console.WriteLine("Options: ");
                 Console.WriteLine("  -i, --install <file>  Install a package");
                 Console.WriteLine("  -p, --pack <dir> <config>  Pack a directory into a package");
-                Console.WriteLine("  -h, --help  Display this help message");
+                Console.WriteLine("  -h, --help  Display this help message\n");
                 return 0;
             }
         }

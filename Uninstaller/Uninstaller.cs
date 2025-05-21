@@ -1,7 +1,5 @@
-﻿using net.am7999.Util;
-
-class App {
+﻿class App {
     static void Main(string[] args) {
-        Util.FileReader("file");
+        Console.WriteLine("hi");
     }
 }

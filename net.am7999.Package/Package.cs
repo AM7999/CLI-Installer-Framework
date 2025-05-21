@@ -10,6 +10,23 @@ namespace net.am7999.Util {
         private string WinTempDir = "C:\\Windows\\Temp\\InstallerCache";
         private string UnixTempDir = "/tmp/InstallerCache/";
 
+        public static void DeleteDirectory(string target_dir) {
+            string[] files = Directory.GetFiles(target_dir);
+            string[] dirs = Directory.GetDirectories(target_dir);
+
+            foreach (string file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                DeleteDirectory(dir);
+            }
+
+            Directory.Delete(target_dir, false);
+        }
 
         public static string FileReader(string file) {
             StreamReader sr = new StreamReader(file);
@@ -124,9 +141,11 @@ namespace net.am7999.Package {
         }
 
         public static void generateUninstallFiles(string json) {
-            dynamic pkg = JsonConvert.DeserializeObject(json);
-            JArray a = JArray.Parse(pkg["OS"][0]["files"]);
-            Console.WriteLine(a);
+            var jsonArray =  JArray.Parse(json);
+
+            foreach(var OS in jsonArray) {
+                //var files
+            }
         }
     }
 }
