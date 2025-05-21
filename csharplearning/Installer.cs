@@ -25,27 +25,27 @@ class App {
                     // Checking if the file exists
                     if (File.Exists(args[1])) {
                         // this caused so much pain for me in testing like you dont know how much time i spent trying to figure why the fuck my installer was bringing files back from the dead
-                        bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath());
-                        if (checkForLeftoverCacheDir) { Util.DeleteDirectory(Util.returnInstallPath()); }
+                        bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath(false));
+                        if (checkForLeftoverCacheDir) { Util.DeleteDirectory(Util.returnInstallPath(false)); }
                         // Unpacking the package
                         AnsiConsole.Status()
                             .Spinner(Spinner.Known.Shark)
                             .Start("Unpacking to Temporary Directory...", ctx => {
-                                Package.Unpack(args[1], Util.returnInstallPath());
+                                Package.Unpack(args[1], Util.returnInstallPath(false));
                             });
 
                         // checking the pkg architecture
-                        bool pkgArch = Package.returnPackageArch(Util.returnInstallPath() + "packageManifest.json");
+                        bool pkgArch = Package.returnPackageArch(Util.returnInstallPath(false) + "packageManifest.json");
                         if (!pkgArch) {
                             return 1;
                         }
 
                         // Grabbing the package information
-                        string pkgName = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", true, false, false, false, false);
-                        string pkgVersion = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, true, false, false, false);
-                        string pkgDesc = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, false, true, false, false);
-                        string pkgAuthor = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, false, false, true, false);
-                        string pkgLic = Package.getPkgInformation(Util.returnInstallPath() + "packageManifest.json", false, false, false, false, true);
+                        string pkgName = Package.getPkgInformation(Util.returnInstallPath(false) + "packageManifest.json", true, false, false, false, false);
+                        string pkgVersion = Package.getPkgInformation(Util.returnInstallPath(false) + "packageManifest.json", false, true, false, false, false);
+                        string pkgDesc = Package.getPkgInformation(Util.returnInstallPath(false) + "packageManifest.json", false, false, true, false, false);
+                        string pkgAuthor = Package.getPkgInformation(Util.returnInstallPath(false) + "packageManifest.json", false, false, false, true, false);
+                        string pkgLic = Package.getPkgInformation(Util.returnInstallPath(false) + "packageManifest.json", false, false, false, false, true);
 
                         AnsiConsole.Markup("[bold green]Package Information[/]\n");
                         AnsiConsole.Markup($"[bold]Name:[/] {pkgName}\n");
@@ -54,7 +54,7 @@ class App {
                         AnsiConsole.Markup($"[bold]Author:[/] {pkgAuthor} \n");
                         AnsiConsole.Markup($"[bold]License:[/] {pkgLic} \n\n");
 
-                        string installPath = Util.returnInstallPath();
+                        string installPath = Util.returnInstallPath(false);
 
                         var changeInstallPath = AnsiConsole.Confirm("Do you want to change the default install path? (currently: " + installPath + pkgName, false);
                         if (changeInstallPath) {
@@ -68,7 +68,7 @@ class App {
                             AnsiConsole.Status()
                             .Spinner(Spinner.Known.Shark)
                             .Start("Installing...", ctx => {
-                                Util.CopyDirectory(Util.returnInstallPath() + "", installPath + pkgName);
+                                Util.CopyDirectory(Util.returnInstallPath(false) + "", installPath + pkgName);
                                 //Package.GenerateUninstallFiles(path);
                             });
 
@@ -95,14 +95,14 @@ class App {
 
             if(args[0] == "-d") {
                 string pkg = Util.FileReader(args[1]);
-                net.am7999.Package.Package.generateUninstallFiles(pkg);
+                Package.generateUninstallFiles(pkg);
                 return 10;
             }
 
             if (args[0] == "-p" || args[0] == "--package") {
                 if (args[1] != "") {
-                    bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath());
-                    if (checkForLeftoverCacheDir) { Util.DeleteDirectory(Util.returnInstallPath() + "*"); }
+                    bool checkForLeftoverCacheDir = Util.doesFolderExsist(Util.returnInstallPath(false));
+                    if (checkForLeftoverCacheDir) { Util.DeleteDirectory(Util.returnInstallPath(false) + "*"); }
 
                     string pkgName = Package.getPkgInformation(args[1] + "packageManifest.json", true, false, false, false, false);
                     string pkgAuthor = Package.getPkgInformation(args[1] + "packageManifest.json", false, false, false, true, false);

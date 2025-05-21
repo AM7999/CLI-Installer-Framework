@@ -75,14 +75,30 @@ namespace net.am7999.Util {
 
         // i forgot to make my code cross platform early on so
         // i mean, here we are now on May 2, 2025
-        public static string returnInstallPath() {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) 
-                return "/tmp/InstallerCache/";
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                return "/tmp/InstallerCache/";
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
-                return "C:\\Windows\\Temp\\InstallerCache\\";
-            return "unknown";
+        public static string returnInstallPath(bool getOSName) {
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))  {
+                if(getOSName) {
+                    return "Linux";
+                }
+                else {
+                    return "/tmp/InstallerCache/";
+                }
+            }
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                if(getOSName) {
+                    return "macOS";
+                } else {
+                    return "/tmp/InstallerCache/";
+                }
+            }
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                if(getOSName) {
+                    return "Windows";
+                } else {
+                    return "C:\\Windows\\Temp\\InstallerCache\\";
+                }
+            }
+            throw new Exception("Unknown Operating system");
         }
     }
 }
@@ -141,11 +157,18 @@ namespace net.am7999.Package {
         }
 
         public static void generateUninstallFiles(string json) {
-            var jsonArray =  JArray.Parse(json);
+            dynamic pkg = JsonConvert.DeserializeObject(json);
 
-            foreach(var OS in jsonArray) {
-                //var files
+            for(int i = 0; i <= 2; i++ ) {
+                if(pkg["OS"][i]["name"] == Util.Util.returnInstallPath(true)) {
+                    var fileArray = pkg["OS"][i]["files"].ToObject<string[]>();
+                    int x = fileArray.Length - 1;
+                    for(int y = 0; y <= x; y++) {
+                        Console.WriteLine(pkg["OS"][i-1]["files"][y]);
+                    }
+                }
             }
+
         }
     }
 }
