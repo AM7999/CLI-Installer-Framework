@@ -12,9 +12,9 @@
       "commandName": "Project",
       "commandLineArgs": "-i C:\\Deltarune.cab"
     },
-    "Package Config": {
+    "Validate JSON": {
       "commandName": "Project",
-      "commandLineArgs": "-pc"
+      "commandLineArgs": "-d C:\\Users\\AMart\\OneDrive\\Desktop\\packageManifest.json"
     }
   }
 }

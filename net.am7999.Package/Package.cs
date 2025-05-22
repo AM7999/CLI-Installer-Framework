@@ -75,7 +75,7 @@ namespace net.am7999.Util {
 
         // i forgot to make my code cross platform early on so
         // i mean, here we are now on May 2, 2025
-        public static string returnInstallPath(bool getOSName) {
+        public static string returnTempPath(bool getOSName) {
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))  {
                 if(getOSName) {
                     return "Linux";
@@ -144,29 +144,31 @@ namespace net.am7999.Package {
             string pkgArch = pkg["arch"];
             string expectedArch = net.am7999.Util.Util.GetHostArch();
             // How does my code get any worse than this
-            if (pkgArch != expectedArch.ToLower() && pkgArch != "Any")
-            {
+            if (pkgArch != expectedArch.ToLower() && pkgArch != "Any") {
                 AnsiConsole.MarkupLine("[bold red]The package is not compatible with the host architecture.[/]");
                 return false;
             }
-            if (pkgArch != expectedArch.ToLower() && pkgArch == "Any")
-            {
+            if (pkgArch != expectedArch.ToLower() && pkgArch == "Any") {
                 return true;
             }
             return true;
         }
 
-        public static void generateUninstallFiles(string json) {
+        public static void generateUninstallFiles(string json, string installPath) {
             dynamic pkg = JsonConvert.DeserializeObject(json);
-
             for(int i = 0; i <= 2; i++ ) {
-                if(pkg["OS"][i]["name"] == Util.Util.returnInstallPath(true)) {
+                if (pkg["OS"][i]["name"] == Util.Util.returnTempPath(true)) {
                     var fileArray = pkg["OS"][i]["files"].ToObject<string[]>();
                     int x = fileArray.Length - 1;
-                    for(int y = 0; y <= x; y++) {
-                        Console.WriteLine(pkg["OS"][i-1]["files"][y]);
+                    for (int y = 0; y <= x; y++) {
+                        Console.WriteLine(pkg["OS"][i]["files"][y]);
+
                     }
+
+                    return;
                 }
+                else if (pkg["OS"][i]["name"] != Util.Util.returnTempPath(true))
+                    throw new Exception("The package is not compatible with the host operating system");
             }
 
         }

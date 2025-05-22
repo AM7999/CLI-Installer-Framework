@@ -1,8 +1,0 @@
-{
-  "win": {
-    "tempDir": "C:\\Windows\\Temp\\InstallerCache"
-  },
-  "linux": {
-    "tempDir": "/tmp"
-  }
-}
